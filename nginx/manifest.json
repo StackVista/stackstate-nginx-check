@@ -1,0 +1,23 @@
+{
+  "display_name": "Nginx",
+  "maintainer": "jdewinne@stackstate.com",
+  "manifest_version": "1.0.0",
+  "name": "nginx",
+  "metric_prefix": "nginx.",
+  "metric_to_check": "",
+  "creates_events": false,
+  "short_description": "",
+  "guid": "b5c84842-72da-4fd6-b728-d943e6877fb5",
+  "support": "core",
+  "supported_os": [
+    "linux",
+    "mac_os",
+    "windows"
+  ],
+  "public_title": "StackState-Nginx Integration",
+  "categories": [
+    ""
+  ],
+  "type": "check",
+  "is_public": false
+}

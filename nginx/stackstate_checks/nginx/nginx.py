@@ -51,5 +51,3 @@ class NginxCheck(AgentCheck):
         if parsed['directive'] == 'http':
             external_id = "urn:nginx:http:{}".format(filename)
             self.component(external_id, 'http', {})
-
-

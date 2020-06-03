@@ -9,17 +9,35 @@ def sts_environment():
     # This conf instance is used when running `checksdev env start mycheck myenv`.
     # The start command places this as a `conf.yaml` in the `conf.d/mycheck/` directory.
     # If you want to run an environment this object can not be empty.
-    return {"name": "nginx+",
+    return {"name": "nginx",
             "location": "./tests/data/nginx_http.conf"}
 
 
 @pytest.fixture
 def http_instance():
-    return {"name": "nginx_http",
+    return {"name": "nginx",
             "location": "./tests/data/nginx_http.conf"}
 
 
 @pytest.fixture
+def simple_instance():
+    return {"name": "nginx",
+            "location": "./tests/data/simple/nginx.conf"}
+
+
+@pytest.fixture
+def messy_instance():
+    return {"name": "nginx",
+            "location": "./tests/data/messy/nginx.conf"}
+
+
+@pytest.fixture
+def include_instance():
+    return {"name": "nginx",
+            "location": "./tests/data/with_include/nginx.conf"}
+
+
+@pytest.fixture
 def events_instance():
-    return {"name": "nginx_events",
+    return {"name": "nginx",
             "location": "./tests/data/nginx_events.conf"}

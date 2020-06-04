@@ -2,7 +2,10 @@
 # All rights reserved
 # Licensed under a 3-clause BSD style license (see LICENSE)
 from stackstate_checks.base import AgentCheck, ConfigurationError, TopologyInstance
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 import crossplane
 import uuid
 

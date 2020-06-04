@@ -73,3 +73,17 @@ def test_include(aggregator, include_instance):
     assert len(components) == 5
     assert len(relations) == 4
     assert instance_key == expected_instance_key
+
+
+def test_simple_upstream(aggregator, simple_upstream_instance):
+    topology.reset()
+    check = NginxCheck('nginx', {}, instances=[simple_upstream_instance])
+    check.check(simple_upstream_instance)
+    snapshot = topology.get_snapshot(check.check_id)
+    components = snapshot.get("components")
+    relations = snapshot.get("relations")
+    instance_key = snapshot.get("instance_key")
+    expected_instance_key = {'type': 'nginx', 'url': simple_upstream_instance['location']}
+    assert len(components) == 6
+    assert len(relations) == 5
+    assert instance_key == expected_instance_key

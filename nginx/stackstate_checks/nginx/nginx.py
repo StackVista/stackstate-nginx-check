@@ -34,6 +34,7 @@ class Location():
     def __init__(self, id, external_id):
         self.id = id
         self.external_id = external_id
+        self.status_zone = None
         self.proxy_pass = None
         # The upstream servers (in case of proxy_pass directive)
         self.servers = {}
@@ -162,7 +163,8 @@ class NginxCheck(AgentCheck):
                 self.component(virtual_server.external_id, "nginx_virtual_server", server_data)
                 self.relation(self.http.external_id, virtual_server.external_id, "has", {})
                 for l_id, location in virtual_server.locations.items():
-                    self.component(location.external_id, "nginx_location", {})
+                    location_data = {'status_zone': location.status_zone} if location.status_zone else {}
+                    self.component(location.external_id, "nginx_location", location_data)
                     self.relation(virtual_server.external_id, location.external_id, "has", {})
                     for s_id, server in location.servers.items():
                         self.component(server.external_id, "nginx_upstream_server", {})

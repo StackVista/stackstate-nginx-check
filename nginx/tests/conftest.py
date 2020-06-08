@@ -50,6 +50,12 @@ def complex_instance():
 
 
 @pytest.fixture
+def location_zone_instance():
+    return {"name": "nginx",
+            "location": "./tests/data/location_zone/nginx.conf"}
+
+
+@pytest.fixture
 def events_instance():
     return {"name": "nginx",
             "location": "./tests/data/nginx_events.conf"}

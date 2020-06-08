@@ -106,3 +106,22 @@ def test_complex(aggregator, complex_instance):
             assert 'status_zone' in component['data']
         else:
             assert 'status_zone' not in component['data']
+
+
+def test_location_zone(aggregator, location_zone_instance):
+    topology.reset()
+    check = NginxCheck('nginx', {}, instances=[location_zone_instance])
+    check.check(location_zone_instance)
+    snapshot = topology.get_snapshot(check.check_id)
+    components = snapshot.get("components")
+    relations = snapshot.get("relations")
+    instance_key = snapshot.get("instance_key")
+    expected_instance_key = {'type': 'nginx', 'url': location_zone_instance['location']}
+    assert len(components) == 3
+    assert len(relations) == 2
+    assert instance_key == expected_instance_key
+    for component in components:
+        if component['id'] in ('urn:nginx:location:nginx:/'):
+            assert 'status_zone' in component['data']
+        else:
+            assert 'status_zone' not in component['data']

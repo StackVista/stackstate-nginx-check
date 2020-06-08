@@ -87,3 +87,22 @@ def test_simple_upstream(aggregator, simple_upstream_instance):
     assert len(components) == 6
     assert len(relations) == 5
     assert instance_key == expected_instance_key
+
+
+def test_complex(aggregator, complex_instance):
+    topology.reset()
+    check = NginxCheck('nginx', {}, instances=[complex_instance])
+    check.check(complex_instance)
+    snapshot = topology.get_snapshot(check.check_id)
+    components = snapshot.get("components")
+    relations = snapshot.get("relations")
+    instance_key = snapshot.get("instance_key")
+    expected_instance_key = {'type': 'nginx', 'url': complex_instance['location']}
+    assert len(components) == 34
+    assert len(relations) == 33
+    assert instance_key == expected_instance_key
+    for component in components:
+        if component['id'] in ('urn:nginx:server:nginx:127.0.0.1:10122', 'urn:nginx:server:nginx:127.0.0.3:10122'):
+            assert 'status_zone' in component['data']
+        else:
+            assert 'status_zone' not in component['data']

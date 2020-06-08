@@ -7,7 +7,12 @@ try:
 except ImportError:
     from urlparse import urlparse
 import crossplane
+import traceback
 import uuid
+
+
+class ConfigError(Exception):
+    """Basic exception for when nginx json payload contains errors"""
 
 
 class Http():
@@ -21,6 +26,7 @@ class VirtualServer():
     def __init__(self, id, external_id):
         self.id = id
         self.external_id = external_id
+        self.status_zone = None
         self.locations = {}
 
 
@@ -65,14 +71,14 @@ class NginxCheck(AgentCheck):
         self.name = name
         self.start_snapshot()
         try:
-            self.log.info("Processing file: {file}".format(file=location))
+            self.log.debug("Processing file: {file}".format(file=location))
             self.payload = crossplane.parse(location)
             self._parse_topology()
             self._parse_upstreams()
             self._create_topology()
         except Exception as err:
             msg = "Nginx check failed: {}".format(str(err))
-            self.log.error(msg)
+            self.log.error(traceback.format_exc())
             self.service_check(self.SERVICE_CHECK_NAME, AgentCheck.CRITICAL, message=msg, tags=[])
         finally:
             self.stop_snapshot()
@@ -82,7 +88,9 @@ class NginxCheck(AgentCheck):
 
     def _parse_topology(self):
         if self.payload['status'] != "ok" or len(self.payload["errors"]) > 0:
-            raise "incorrect payload"
+            raise ConfigError("Incorrect payload: {status} - {errors}"
+                              .format(status=self.payload['status'],
+                                      errors="|".join(error['error'] for error in self.payload['errors'])))
         if len(self.payload['config']) > 0:
             self._process_config(self.payload['config'][0])
 
@@ -109,6 +117,8 @@ class NginxCheck(AgentCheck):
         if parsed['directive'] == 'listen':
             external_id = "urn:nginx:server:{}:{}".format(self.name, ":".join(parsed['args']))
             parent.external_id = external_id
+        if parsed['directive'] == 'status_zone':
+            parent.status_zone = parsed['args']
         if parsed['directive'] == 'location':
             external_id = "urn:nginx:location:{}:{}".format(self.name, ":".join(parsed['args']))
             parent.locations[id] = Location(id=id, external_id=external_id)
@@ -135,7 +145,7 @@ class NginxCheck(AgentCheck):
                     self._process_upstream(location)
 
     def _process_upstream(self, location):
-        self.log.error("Processing upstream {}".format(location.proxy_pass))
+        self.log.debug("Processing upstream {}".format(location.proxy_pass))
         parsed = self.upstreams[urlparse(location.proxy_pass).netloc]
         for server in parsed['block']:
             id = str(uuid.uuid4())
@@ -148,7 +158,8 @@ class NginxCheck(AgentCheck):
             self.component(self.http.external_id, "nginx_http", {})
             for vs_id, virtual_server in self.http.virtual_servers.items():
                 self.log.debug("Creating component: {}".format(virtual_server.external_id))
-                self.component(virtual_server.external_id, "nginx_virtual_server", {})
+                server_data = {'status_zone': virtual_server.status_zone} if virtual_server.status_zone else {}
+                self.component(virtual_server.external_id, "nginx_virtual_server", server_data)
                 self.relation(self.http.external_id, virtual_server.external_id, "has", {})
                 for l_id, location in virtual_server.locations.items():
                     self.component(location.external_id, "nginx_location", {})

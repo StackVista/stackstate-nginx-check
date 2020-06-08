@@ -44,6 +44,12 @@ def simple_upstream_instance():
 
 
 @pytest.fixture
+def complex_instance():
+    return {"name": "nginx",
+            "location": "./tests/data/complex/nginx.conf"}
+
+
+@pytest.fixture
 def events_instance():
     return {"name": "nginx",
             "location": "./tests/data/nginx_events.conf"}

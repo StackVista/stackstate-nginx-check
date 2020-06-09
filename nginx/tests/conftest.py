@@ -14,6 +14,13 @@ def sts_environment():
 
 
 @pytest.fixture
+def demo_instance():
+    return {"nginx_status_url": "http://demo.nginx.com/api/",
+            "use_plus_api": True,
+            "plus_api_version": 6}
+
+
+@pytest.fixture
 def http_instance():
     return {"name": "nginx",
             "location": "./tests/data/nginx_http.conf"}

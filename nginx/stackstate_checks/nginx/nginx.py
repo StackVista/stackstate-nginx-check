@@ -121,7 +121,7 @@ class NginxCheck(AgentCheck):
             external_id = "urn:nginx:{}:server:{}".format(self.name, parent.listen)
             parent.external_id = external_id
         if parsed['directive'] == 'status_zone':
-            parent.status_zone = parsed['args']
+            parent.status_zone = parsed['args'][0]
         if parsed['directive'] == 'location':
             external_id = "urn:nginx:{}:server:{}:location:{}".format(self.name, parent.listen,
                                                                       ":".join(parsed['args']))
@@ -163,11 +163,12 @@ class NginxCheck(AgentCheck):
             self.component(self.http.external_id, "nginx_http", {})
             for vs_id, virtual_server in self.http.virtual_servers.items():
                 self.log.debug("Creating component: {}".format(virtual_server.external_id))
-                server_data = {'status_zone': virtual_server.status_zone} if virtual_server.status_zone else {}
+                server_data = {"status_zone": "{}"
+                               .format(virtual_server.status_zone)} if virtual_server.status_zone else {}
                 self.component(virtual_server.external_id, "nginx_virtual_server", server_data)
                 self.relation(self.http.external_id, virtual_server.external_id, "has", {})
                 for l_id, location in virtual_server.locations.items():
-                    location_data = {'status_zone': location.status_zone} if location.status_zone else {}
+                    location_data = {"status_zone": "{}".format(location.status_zone)} if location.status_zone else {}
                     self.log.debug("Location id: {} - data: {}".format(location.external_id, location_data))
                     self.component(location.external_id, "nginx_location", location_data)
                     self.relation(virtual_server.external_id, location.external_id, "has", {})

@@ -133,6 +133,9 @@ class NginxCheck(AgentCheck):
             # An upstream directive should be parsed later, when the proxy_pass / location directives have been parsed.
             self.upstreams[parsed['args'][0]] = parsed
             return
+        if parsed['directive'] == 'include':
+            for include in parsed['includes']:
+                self._process_config(self.payload['config'][include], parent=parent)
         self.log.debug("Done processing id: {}".format(id))
         if 'block' in parsed:
             for block in parsed['block']:

@@ -98,8 +98,8 @@ def test_complex(aggregator, complex_instance):
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
     expected_instance_key = {'type': 'nginx', 'url': complex_instance['location']}
-    assert len(components) == 34
-    assert len(relations) == 33
+    assert len(components) == 38
+    assert len(relations) == 37
     assert instance_key == expected_instance_key
     for component in components:
         assert 'h2u' not in component['id']  # upstream zone shouldn't be a component.

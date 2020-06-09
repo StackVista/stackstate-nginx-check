@@ -26,6 +26,7 @@ class VirtualServer():
     def __init__(self, id, external_id):
         self.id = id
         self.external_id = external_id
+        self.listen = None
         self.status_zone = None
         self.locations = {}
 
@@ -107,21 +108,23 @@ class NginxCheck(AgentCheck):
         new_parent = None
         self.log.debug("Processing id: {}".format(id))
         if parsed['directive'] == 'http':
-            external_id = "urn:nginx:http:{}".format(self.name)
+            external_id = "urn:nginx:{}:http".format(self.name)
             self.http = Http(id=id, external_id=external_id)
             new_parent = self.http
         if parsed['directive'] == 'server':
             self.log.debug("Processing directive server for {}".format(id))
-            external_id = "urn:nginx:server:{}:{}".format(self.name, "unknown")
+            external_id = "urn:nginx:{}:server:{}".format(self.name, "unknown")
             parent.virtual_servers[id] = VirtualServer(id=id, external_id=external_id)
             new_parent = parent.virtual_servers[id]
         if parsed['directive'] == 'listen':
-            external_id = "urn:nginx:server:{}:{}".format(self.name, ":".join(parsed['args']))
+            parent.listen = ":".join(parsed['args'])
+            external_id = "urn:nginx:{}:server:{}".format(self.name, parent.listen)
             parent.external_id = external_id
         if parsed['directive'] == 'status_zone':
             parent.status_zone = parsed['args']
         if parsed['directive'] == 'location':
-            external_id = "urn:nginx:location:{}:{}".format(self.name, ":".join(parsed['args']))
+            external_id = "urn:nginx:{}:server:{}:location:{}".format(self.name, parent.listen,
+                                                                      ":".join(parsed['args']))
             parent.locations[id] = Location(id=id, external_id=external_id)
             new_parent = parent.locations[id]
         if parsed['directive'] == 'proxy_pass':
@@ -149,9 +152,10 @@ class NginxCheck(AgentCheck):
         self.log.debug("Processing upstream {}".format(location.proxy_pass))
         parsed = self.upstreams[urlparse(location.proxy_pass).netloc]
         for server in parsed['block']:
-            id = str(uuid.uuid4())
-            external_id = "urn:nginx:upstream:{}:{}".format(self.name, ":".join(server['args']))
-            location.servers[id] = Server(id, external_id)
+            if server['directive'] == 'server':
+                id = str(uuid.uuid4())
+                external_id = "urn:nginx:{}:upstream:{}".format(self.name, ":".join(server['args']))
+                location.servers[id] = Server(id, external_id)
 
     def _create_topology(self):
         if self.http:
@@ -164,6 +168,7 @@ class NginxCheck(AgentCheck):
                 self.relation(self.http.external_id, virtual_server.external_id, "has", {})
                 for l_id, location in virtual_server.locations.items():
                     location_data = {'status_zone': location.status_zone} if location.status_zone else {}
+                    self.log.debug("Location id: {} - data: {}".format(location.external_id, location_data))
                     self.component(location.external_id, "nginx_location", location_data)
                     self.relation(virtual_server.external_id, location.external_id, "has", {})
                     for s_id, server in location.servers.items():

@@ -102,7 +102,8 @@ def test_complex(aggregator, complex_instance):
     assert len(relations) == 33
     assert instance_key == expected_instance_key
     for component in components:
-        if component['id'] in ('urn:nginx:server:nginx:127.0.0.1:10122', 'urn:nginx:server:nginx:127.0.0.3:10122'):
+        assert 'h2u' not in component['id']  # upstream zone shouldn't be a component.
+        if component['id'] in ('urn:nginx:nginx:server:127.0.0.1:10122', 'urn:nginx:nginx:server:127.0.0.3:10122'):
             assert 'status_zone' in component['data']
         else:
             assert 'status_zone' not in component['data']
@@ -121,7 +122,7 @@ def test_location_zone(aggregator, location_zone_instance):
     assert len(relations) == 2
     assert instance_key == expected_instance_key
     for component in components:
-        if component['id'] in ('urn:nginx:location:nginx:/'):
+        if component['id'] == 'urn:nginx:nginx:server:127.0.0.1:8080:location:/':
             assert 'status_zone' in component['data']
         else:
             assert 'status_zone' not in component['data']

@@ -36,8 +36,17 @@ class Location():
         self.id = id
         self.external_id = external_id
         self.status_zone = None
-        self.proxy_pass = None
-        # The upstream servers (in case of proxy_pass directive)
+        # The upstream servers
+        self.proxy_pass = None  # String representing the proxy value
+        self.upstream = None  # Actual proxy pass upstream object
+
+
+class Upstream():
+    def __init__(self, id, external_id):
+        self.id = id
+        self.external_id = external_id
+        self.zone = None
+        # The upstream servers
         self.servers = {}
 
 
@@ -48,9 +57,9 @@ class Server():
         self.external_id = external_id
 
 
-class NginxCheck(AgentCheck):
-    INSTANCE_TYPE = "nginx"
-    SERVICE_CHECK_NAME = "Nginx"
+class NginxTopo(AgentCheck):
+    INSTANCE_TYPE = "nginxtopo"
+    SERVICE_CHECK_NAME = "NginxTopo"
 
     def __init__(self, name, init_config, instances=None):
         AgentCheck.__init__(self, name, init_config, instances)
@@ -153,12 +162,20 @@ class NginxCheck(AgentCheck):
 
     def _process_upstream(self, location):
         self.log.debug("Processing upstream {}".format(location.proxy_pass))
-        parsed = self.upstreams[urlparse(location.proxy_pass).netloc]
-        for server in parsed['block']:
-            if server['directive'] == 'server':
-                id = str(uuid.uuid4())
-                external_id = "urn:nginx:{}:upstream:{}".format(self.name, ":".join(server['args']))
-                location.servers[id] = Server(id, external_id)
+        upstream_name = urlparse(location.proxy_pass).netloc
+        parsed = self.upstreams[upstream_name]
+        upstream_id = str(uuid.uuid4())
+        upstream_ext_id = "urn:nginx:{}:upstream:{}".format(self.name, upstream_name)
+        location.upstream = Upstream(upstream_id, upstream_ext_id)
+        for block in parsed['block']:
+            if block['directive'] == 'server':
+                server_id = str(uuid.uuid4())
+                server_external_id = "urn:nginx:{}:upstream:{}:server:{}".format(self.name,
+                                                                                 upstream_name,
+                                                                                 ":".join(block['args']))
+                location.upstream.servers[server_id] = Server(server_id, server_external_id)
+            if block['directive'] == 'zone':
+                location.upstream.zone = block['args'][0]
 
     def _create_topology(self):
         if self.http:
@@ -175,6 +192,10 @@ class NginxCheck(AgentCheck):
                     self.log.debug("Location id: {} - data: {}".format(location.external_id, location_data))
                     self.component(location.external_id, "nginx_location", location_data)
                     self.relation(virtual_server.external_id, location.external_id, "has", {})
-                    for s_id, server in location.servers.items():
-                        self.component(server.external_id, "nginx_upstream_server", {})
-                        self.relation(location.external_id, server.external_id, "has", {})
+                    if location.upstream:
+                        upstream_data = {"zone": "{}".format(location.upstream.zone)} if location.upstream.zone else {}
+                        self.component(location.upstream.external_id, "nginx_upstream", upstream_data)
+                        self.relation(location.external_id, location.upstream.external_id, "has", {})
+                        for s_id, server in location.upstream.servers.items():
+                            self.component(server.external_id, "nginx_upstream_server", {})
+                            self.relation(location.upstream.external_id, server.external_id, "has", {})

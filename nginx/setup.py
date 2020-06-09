@@ -10,7 +10,7 @@ HERE = path.dirname(path.abspath(__file__))
 
 # Get version info
 ABOUT = {}
-with open(path.join(HERE, 'stackstate_checks', 'nginx', '__about__.py')) as f:
+with open(path.join(HERE, 'stackstate_checks', 'nginxtopo', '__about__.py')) as f:
     exec(f.read(), ABOUT)
 
 # Get the long description from the README file
@@ -24,7 +24,7 @@ CHECKS_BASE_REQ = 'stackstate-checks-base'
 setup(
     name='stackstate-nginx',
     version=ABOUT['__version__'],
-    description='The Nginx check',
+    description='The Nginx checks',
     long_description=long_description,
     long_description_content_type='text/markdown',
     keywords='stackstate agent nginx check',
@@ -52,7 +52,7 @@ setup(
     ],
 
     # The package we're going to ship
-    packages=['stackstate_checks.nginx'],
+    packages=['stackstate_checks.nginxtopo', 'stackstate_checks.nginxmetrics'],
 
     # Run-time dependencies
     install_requires=[CHECKS_BASE_REQ],

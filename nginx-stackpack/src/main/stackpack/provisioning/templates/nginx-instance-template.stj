@@ -1,0 +1,36 @@
+{
+  "nodes": [
+    {
+      "_type": "DataSource",
+      "name": "Nginx - {{instanceName}} ",
+      "pluginId": "Sts",
+      "identifier": "urn:stackpack:nginx:instance:{{instanceId}}:data-source:nginxtopo",
+      "config": {
+        "expireElementsAfter": 172800000,
+        "_type": "Sts.StsTopologyDataSourceConfig",
+        "autoExpireElements": false,
+        "id": -132,
+        "supportedWindowingMethods": [],
+        "integrationType": "nginx",
+        "supportedDataTypes": ["TOPOLOGY_ELEMENTS"],
+        "topic": "{{ nginxTopicName }}"
+      },
+      "extTopology": {
+        "_type": "ExtTopology",
+        "dataSource": -130,
+        "id": -118,
+        "settings": {
+          "_type": "TopologySyncSettings",
+          "cleanupInterval": 3600000,
+          "maxBatchesPerSecond": 5,
+          "id": -131,
+          "maxBatchSize": 200,
+          "cleanupExpiredElements": false
+        }
+      },
+      "id": -130,
+      "uiRequestTimeout": 15000
+    }
+  ],
+  "version": "0.1"
+}

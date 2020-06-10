@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "_type": "Layer",
+      "id": -300,
+      "identifier": "urn:stackpack:nginx:shared:layer:http",
+      "name": "HTTP",
+      "order": 10.01
+    },
+    {
+      "_type": "Layer",
+      "id": -301,
+      "identifier": "urn:stackpack:nginx:shared:layer:virtual-server",
+      "name": "Virtual Server",
+      "order": 11.01
+    },
+    {
+      "_type": "Layer",
+      "id": -302,
+      "identifier": "urn:stackpack:nginx:shared:layer:location",
+      "name": "Location",
+      "order": 12.01
+    },
+    {
+      "_type": "Layer",
+      "id": -303,
+      "identifier": "urn:stackpack:nginx:shared:layer:upstream",
+      "name": "Upstream",
+      "order": 13.01
+    },
+    {
+      "_type": "Layer",
+      "id": -304,
+      "identifier": "urn:stackpack:nginx:shared:layer:upstream-server",
+      "name": "Upstream Server",
+      "order": 14.01
+    }
+  ],
+  "version": "0.1"
+}

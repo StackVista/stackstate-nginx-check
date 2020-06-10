@@ -1,0 +1,32 @@
+{
+  "_type": "Component",
+  "checks": [],
+  "streams": [],
+  "labels": [
+    \{{#if element.data.labels\}}
+    \{{# join element.data.labels ","\}}
+        {
+          "_type": "Label",
+          "name": "\{{ this \}}"
+        }
+    \{{/ join \}}
+    \{{/if\}}
+    \{{#if element.data.tags\}}
+    \{{# join element.data.tags "," ","\}}
+    {
+      "_type": "Label",
+      "name": "\{{key\}}:\{{this\}}"
+    }
+    \{{/ join \}}
+    \{{/if\}}
+    ],
+  "name": "\{{#if element.data.name\}}\{{ element.data.name \}}\{{else\}}\{{ element.externalId \}}\{{/if\}}",
+\{{#if element.data.description\}}"description": "\{{ element.data.description \}}",\{{/if\}}
+  "type" : \{{ getOrCreate (identifier "urn:stackpack:nginx:shared" "ComponentType" element.type.name ) (identifier "urn:system:auto" "ComponentType" "nginx-generic-resource") "Type=ComponentType;Name=nginx generic resource" \}},
+  "version": "\{{ element.data.version \}}",
+  "layer" : \{{ get element.data.layer \}},
+  "domain": \{{ getOrCreate (identifier "urn:stackpack:nginx:shared" "Domain"  element.data.domain) (identifier "urn:system:auto" "Domain" element.data.domain) (concat "Type=Domain;Name=" element.data.domain)\}},
+  "environments": [
+    \{{ get "urn:stackpack:nginxshared:environment:prod" \}}
+  ]
+}

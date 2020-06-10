@@ -58,7 +58,7 @@ class Server():
 
 
 class NginxTopo(AgentCheck):
-    INSTANCE_TYPE = "nginxtopo"
+    INSTANCE_TYPE = "nginx"
     SERVICE_CHECK_NAME = "NginxTopo"
 
     def __init__(self, name, init_config, instances=None):
@@ -74,8 +74,8 @@ class NginxTopo(AgentCheck):
         if "location" not in instance:
             raise ConfigurationError("Missing location in topology instance configuration.")
 
-        location = instance["location"]
-        return TopologyInstance(self.INSTANCE_TYPE, location)
+        name = instance["name"]
+        return TopologyInstance(self.INSTANCE_TYPE, name)
 
     def check(self, instance):
         name, location = self._get_config(instance)

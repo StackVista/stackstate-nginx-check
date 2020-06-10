@@ -1,6 +1,96 @@
 {
   "nodes": [
     {
+      "_type": "ComponentTemplateFunction",
+      "handlebarsTemplate": "{{ include "./templates/nginx component template.json.handlebars" }}",
+      "id": -422,
+      "identifier": "urn:stackpack:nginx:shared:component-template-function:nginx-component-template",
+      "name": "Nginx Component Template",
+      "parameters": [
+        {
+          "_type": "Parameter",
+          "id": -421,
+          "multiple": false,
+          "name": "element",
+          "required": true,
+          "system": true,
+          "type": "STRUCT_TYPE"
+        }
+      ]
+    },
+    {
+      "_type": "ComponentType",
+      "iconbase64": "{{ include "./icons/nginx.png" "base64" }}",
+      "identifier": "urn:stackpack:nginx:shared:component-type:http",
+      "name": "nginx_http"
+    },
+    {
+      "_type": "ComponentType",
+      "iconbase64": "{{ include "./icons/nginx.png" "base64" }}",
+      "identifier": "urn:stackpack:nginx:shared:component-type:virtual-server",
+      "name": "nginx_virtual_server"
+    },
+    {
+      "_type": "ComponentType",
+      "iconbase64": "{{ include "./icons/nginx.png" "base64" }}",
+      "identifier": "urn:stackpack:nginx:shared:component-type:location",
+      "name": "nginx_location"
+    },
+    {
+      "_type": "ComponentType",
+      "iconbase64": "{{ include "./icons/nginx.png" "base64" }}",
+      "identifier": "urn:stackpack:nginx:shared:component-type:upstream",
+      "name": "nginx_upstream"
+    },
+    {
+      "_type": "ComponentType",
+      "iconbase64": "{{ include "./icons/nginx.png" "base64" }}",
+      "identifier": "urn:stackpack:nginx:shared:component-type:upstream-server",
+      "name": "nginx_upstream_server"
+    },
+    {
+      "_type": "Environment",
+      "id": -329,
+      "identifier": "urn:stackpack:nginx:shared:environment:prod",
+      "name": "PROD"
+    },
+    {
+      "_type": "IdExtractorFunction",
+      "groovyScript": "{{ include "./scripts/nginx component id extractor.groovy" }}",
+      "id": -432,
+      "identifier": "urn:stackpack:nginx:shared:id-extractor-function:nginx-component-id-extractor",
+      "name": "nginx component id extractor",
+      "parameters": [
+        {
+          "_type": "Parameter",
+          "id": -460,
+          "multiple": false,
+          "name": "struct",
+          "required": true,
+          "system": true,
+          "type": "STRUCT_TYPE"
+        }
+      ]
+    },
+    {
+      "_type": "IdExtractorFunction",
+      "groovyScript": "{{ include "./scripts/nginx relation id extractor.groovy" }}",
+      "id": -431,
+      "identifier": "urn:stackpack:nginx:shared:id-extractor-function:nginx-relation-id-extractor",
+      "name": "nginx relation id extractor",
+      "parameters": [
+        {
+          "_type": "Parameter",
+          "id": -461,
+          "multiple": false,
+          "name": "struct",
+          "required": true,
+          "system": true,
+          "type": "STRUCT_TYPE"
+        }
+      ]
+    },
+    {
       "_type": "Layer",
       "id": -300,
       "identifier": "urn:stackpack:nginx:shared:layer:http",
@@ -34,6 +124,24 @@
       "identifier": "urn:stackpack:nginx:shared:layer:upstream-server",
       "name": "Upstream Server",
       "order": 14.01
+    },
+    {
+      "_type": "RelationTemplateFunction",
+      "handlebarsTemplate": "{{ include "./templates/nginx relation template.json.handlebars" }}",
+      "id": -425,
+      "identifier": "urn:stackpack:nginx:shared:relation-template-function:nginx-relation-template",
+      "name": "nginx relation template",
+      "parameters": [
+        {
+          "_type": "Parameter",
+          "id": -456,
+          "multiple": false,
+          "name": "element",
+          "required": true,
+          "system": true,
+          "type": "STRUCT_TYPE"
+        }
+      ]
     }
   ],
   "version": "0.1"

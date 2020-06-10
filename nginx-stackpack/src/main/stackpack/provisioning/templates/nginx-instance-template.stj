@@ -30,6 +30,50 @@
       },
       "id": -130,
       "uiRequestTimeout": 15000
+    },
+    {
+      "_type": "Sync",
+      "componentActions": [],
+      "defaultComponentAction": {
+        "_type": "SyncActionCreateComponent",
+        "id": -6,
+        "mergeStrategy": "MergePreferTheirs",
+        "templateFunction": {{ get "urn:stackpack:nginx:shared:component-template-function:nginx-component-template"  }},
+        "type": "default_component_mapping"
+      },
+      "defaultRelationAction": {
+        "_type": "SyncActionCreateRelation",
+        "id": -4,
+        "mergeStrategy": "MergePreferTheirs",
+        "templateFunction": {{ get "urn:stackpack:nginx:shared:relation-template-function:nginx-relation-template"  }},
+        "type": "default_relation_mapping"
+      },
+      "extTopology": -118,
+      "id": -8,
+      "identifier": "urn:stackpack:nginx:instance:{{instanceId}}:sync:nginx",
+      "name": "Nginx sync - {{instanceName}}",
+      "relationActions": [],
+      "status": "Running",
+      "topologyDataQuery": {
+        "_type": "Sts.StsTopologyElementsQuery",
+        "componentIdExtractorFunction": {{ get "urn:stackpack:nginx:shared:id-extractor-function:nginx-component-id-extractor"  }},
+        "consumerOffsetStartAtEarliest": false,
+        "id": -9,
+        "relationIdExtractorFunction": {{ get "urn:stackpack:nginx:shared:id-extractor-function:nginx-relation-id-extractor"  }}
+      }
+    },
+    {
+      "_type": "QueryView",
+      "groupedByDomains": true,
+      "groupedByLayers": true,
+      "groupingEnabled": true,
+      "id": -160,
+      "identifier": "urn:stackpack:nginx:instance:{{instanceId}}:query-view:nginx",
+      "minimumGroupSize": 8,
+      "name": "Nginx - {{instanceName}}",
+      "query": "(label IN (\"stackpack:nginx\"))",
+      "queryVersion": "0.0.1",
+      "showIndirectRelations": false
     }
   ],
   "version": "0.1"

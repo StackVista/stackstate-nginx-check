@@ -1,0 +1,12 @@
+{
+  "_type": "Relation",
+  "checks": [],
+  "streams": [],
+  "labels": [],
+  "name": "\{{ element.sourceExternalId \}} --> \{{ element.targetExternalId \}}",
+\{{#if element.data.description\}}"description": "\{{ element.data.description \}}",\{{/if\}}
+  "type": \{{ getOrCreate (identifier "urn:stackpack:common" "RelationType" element.type.name) (identifier "urn:system:auto" "RelationType" element.type.name) (concat "Type=RelationType;Name=" element.type.name) \}},
+  "dependencyDirection": "ONE_WAY",
+  "source": \{{ element.sourceId \}},
+  "target": \{{ element.targetId \}}
+}

@@ -21,6 +21,15 @@ class Http():
         self.external_id = external_id
         self.virtual_servers = {}
 
+    # Create Http component in stackstate
+    def create_http(self, nginx_topo):
+        nginx_topo.log.debug("Creating component: {}".format(self.external_id))
+        http_data = {"layer": "HTTP"}
+        http_data["name"] = "http"
+        nginx_topo.component(self.external_id, "nginx_http", http_data)
+        for vs_id, virtual_server in self.virtual_servers.items():
+            virtual_server.create_virtual_server(self, nginx_topo)
+
 
 class VirtualServer():
     def __init__(self, id, external_id):
@@ -30,15 +39,40 @@ class VirtualServer():
         self.status_zone = None
         self.locations = {}
 
+    # Create virtual server in stackstate
+    def create_virtual_server(self, http, nginx_topo):
+        nginx_topo.log.debug("Creating component: {}".format(self.external_id))
+        server_data = {"layer": "Virtual Server"}
+        server_data["name"] = "{}".format(self.listen)
+        if self.status_zone:
+            server_data["status_zone"] = "{}".format(self.status_zone)
+        nginx_topo.component(self.external_id, "nginx_virtual_server", server_data)
+        nginx_topo.relation(http.external_id, self.external_id, "has", {})
+        for l_id, location in self.locations.items():
+            location.create_location(self, nginx_topo)
+
 
 class Location():
-    def __init__(self, id, external_id):
+    def __init__(self, id, external_id, location_name):
         self.id = id
         self.external_id = external_id
+        self.location_name = location_name
         self.status_zone = None
         # The upstream servers
         self.proxy_pass = None  # String representing the proxy value
         self.upstream = None  # Actual proxy pass upstream object
+
+    # Create location in stackstate
+    def create_location(self, virtual_server, nginx_topo):
+        location_data = {"layer": "Location"}
+        location_data["name"] = "{}".format(self.location_name)
+        if self.status_zone:
+            location_data["status_zone"] = "{}".format(self.status_zone)
+        nginx_topo.log.debug("Location id: {} - data: {}".format(self.external_id, location_data))
+        nginx_topo.component(self.external_id, "nginx_location", location_data)
+        nginx_topo.relation(virtual_server.external_id, self.external_id, "has", {})
+        if self.upstream:
+            self.upstream.create_upstream(self, nginx_topo)
 
 
 class Upstream():
@@ -49,12 +83,31 @@ class Upstream():
         # The upstream servers
         self.servers = {}
 
+    # Create upstream in stackstate
+    def create_upstream(self, location, nginx_topo):
+        upstream_data = {"layer": "Upstream"}
+        upstream_data["name"] = "{}".format(self.zone)
+        if self.zone:
+            upstream_data["zone"] = "{}".format(self.zone)
+        nginx_topo.component(self.external_id, "nginx_upstream", upstream_data)
+        nginx_topo.relation(location.external_id, self.external_id, "has", {})
+        for s_id, server in self.servers.items():
+            server.create_server(self, nginx_topo)
+
 
 # Corresponds with an upstream server
 class Server():
-    def __init__(self, id, external_id):
+    def __init__(self, id, external_id, server_name):
         self.id = id
         self.external_id = external_id
+        self.server_name = server_name
+
+    # Create upstream server in stackstate
+    def create_server(self, upstream, nginx_topo):
+        upstream_server_data = {"layer": "Upstream Server"}
+        upstream_server_data["name"] = "{}".format(self.server_name)
+        nginx_topo.component(self.external_id, "nginx_upstream_server", upstream_server_data)
+        nginx_topo.relation(upstream.external_id, self.external_id, "has", {})
 
 
 class NginxTopo(AgentCheck):
@@ -132,9 +185,10 @@ class NginxTopo(AgentCheck):
         if parsed['directive'] == 'status_zone':
             parent.status_zone = parsed['args'][0]
         if parsed['directive'] == 'location':
+            location_name = ":".join(parsed['args'])
             external_id = "urn:nginx:{}:server:{}:location:{}".format(self.name, parent.listen,
-                                                                      ":".join(parsed['args']))
-            parent.locations[id] = Location(id=id, external_id=external_id)
+                                                                      location_name)
+            parent.locations[id] = Location(id=id, external_id=external_id, location_name=location_name)
             new_parent = parent.locations[id]
         if parsed['directive'] == 'proxy_pass':
             parent.proxy_pass = parsed['args'][0]
@@ -170,38 +224,14 @@ class NginxTopo(AgentCheck):
         for block in parsed['block']:
             if block['directive'] == 'server':
                 server_id = str(uuid.uuid4())
+                server_name = ":".join(block['args'])
                 server_external_id = "urn:nginx:{}:upstream:{}:server:{}".format(self.name,
                                                                                  upstream_name,
-                                                                                 ":".join(block['args']))
-                location.upstream.servers[server_id] = Server(server_id, server_external_id)
+                                                                                 server_name)
+                location.upstream.servers[server_id] = Server(server_id, server_external_id, server_name)
             if block['directive'] == 'zone':
                 location.upstream.zone = block['args'][0]
 
     def _create_topology(self):
         if self.http:
-            self.log.debug("Creating component: {}".format(self.http.external_id))
-            self.component(self.http.external_id, "nginx_http", {"layer": "HTTP"})
-            for vs_id, virtual_server in self.http.virtual_servers.items():
-                self.log.debug("Creating component: {}".format(virtual_server.external_id))
-                server_data = {"layer": "Virtual Server"}
-                if virtual_server.status_zone:
-                    server_data["status_zone"] = "{}".format(virtual_server.status_zone)
-                self.component(virtual_server.external_id, "nginx_virtual_server", server_data)
-                self.relation(self.http.external_id, virtual_server.external_id, "has", {})
-                for l_id, location in virtual_server.locations.items():
-                    location_data = {"layer": "Location"}
-                    if location.status_zone:
-                        location_data["status_zone"] = "{}".format(location.status_zone)
-                    self.log.debug("Location id: {} - data: {}".format(location.external_id, location_data))
-                    self.component(location.external_id, "nginx_location", location_data)
-                    self.relation(virtual_server.external_id, location.external_id, "has", {})
-                    if location.upstream:
-                        upstream_data = {"layer": "Upstream"}
-                        if location.upstream.zone:
-                            upstream_data["zone"] = "{}".format(location.upstream.zone)
-                        self.component(location.upstream.external_id, "nginx_upstream", upstream_data)
-                        self.relation(location.external_id, location.upstream.external_id, "has", {})
-                        for s_id, server in location.upstream.servers.items():
-                            upstream_server_data = {"layer": "Upstream Server"}
-                            self.component(server.external_id, "nginx_upstream_server", upstream_server_data)
-                            self.relation(location.upstream.external_id, server.external_id, "has", {})
+            self.http.create_http(self)

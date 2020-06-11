@@ -71,7 +71,7 @@
       "identifier": "urn:stackpack:nginx:instance:{{instanceId}}:query-view:nginx",
       "minimumGroupSize": 8,
       "name": "Nginx - {{instanceName}}",
-      "query": "(label IN (\"stackpack:nginx\"))",
+      "query": "(domain IN (\"{{instanceName}}\"))",
       "queryVersion": "0.0.1",
       "showIndirectRelations": false
     }

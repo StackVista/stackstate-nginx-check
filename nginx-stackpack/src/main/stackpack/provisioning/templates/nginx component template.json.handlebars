@@ -22,11 +22,11 @@
     ],
   "name": "\{{#if element.data.name\}}\{{ element.data.name \}}\{{else\}}\{{ element.externalId \}}\{{/if\}}",
 \{{#if element.data.description\}}"description": "\{{ element.data.description \}}",\{{/if\}}
-  "type" : \{{ getOrCreate (identifier "urn:stackpack:nginx:shared" "ComponentType" element.type.name ) (identifier "urn:system:auto" "ComponentType" "nginx-generic-resource") "Type=ComponentType;Name=nginx generic resource" \}},
+  "type" : \{{ resolveOrCreate "ComponentType" element.type.name "Auto-synced Component" \}},
   "version": "\{{ element.data.version \}}",
-  "layer" : \{{ get element.data.layer \}},
-  "domain": \{{ getOrCreate (identifier "urn:stackpack:nginx:shared" "Domain"  element.data.domain) (identifier "urn:system:auto" "Domain" element.data.domain) (concat "Type=Domain;Name=" element.data.domain)\}},
+  "layer": \{{ resolveOrCreate "Layer" element.data.layer "Auto-synced Components" \}},
+  "domain": \{{ resolveOrCreate "Domain" element.data.domain "Auto-synced Domain" \}},
   "environments": [
-    \{{ get "urn:stackpack:nginxshared:environment:prod" \}}
+    \{{ get "urn:stackpack:nginx:shared:environment:prod" \}}
   ]
 }

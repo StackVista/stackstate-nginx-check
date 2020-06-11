@@ -25,6 +25,7 @@ class Http():
     def create_http(self, nginx_topo):
         nginx_topo.log.debug("Creating component: {}".format(self.external_id))
         http_data = {"layer": "HTTP"}
+        http_data["domain"] = "{}".format(nginx_topo.name)
         http_data["name"] = "http"
         nginx_topo.component(self.external_id, "nginx_http", http_data)
         for vs_id, virtual_server in self.virtual_servers.items():
@@ -43,6 +44,7 @@ class VirtualServer():
     def create_virtual_server(self, http, nginx_topo):
         nginx_topo.log.debug("Creating component: {}".format(self.external_id))
         server_data = {"layer": "Virtual Server"}
+        server_data["domain"] = "{}".format(nginx_topo.name)
         server_data["name"] = "{}".format(self.listen)
         if self.status_zone:
             server_data["status_zone"] = "{}".format(self.status_zone)
@@ -65,6 +67,7 @@ class Location():
     # Create location in stackstate
     def create_location(self, virtual_server, nginx_topo):
         location_data = {"layer": "Location"}
+        location_data["domain"] = "{}".format(nginx_topo.name)
         location_data["name"] = "{}".format(self.location_name)
         if self.status_zone:
             location_data["status_zone"] = "{}".format(self.status_zone)
@@ -86,6 +89,7 @@ class Upstream():
     # Create upstream in stackstate
     def create_upstream(self, location, nginx_topo):
         upstream_data = {"layer": "Upstream"}
+        upstream_data["domain"] = "{}".format(nginx_topo.name)
         upstream_data["name"] = "{}".format(self.zone)
         if self.zone:
             upstream_data["zone"] = "{}".format(self.zone)
@@ -105,6 +109,7 @@ class Server():
     # Create upstream server in stackstate
     def create_server(self, upstream, nginx_topo):
         upstream_server_data = {"layer": "Upstream Server"}
+        upstream_server_data["domain"] = "{}".format(nginx_topo.name)
         upstream_server_data["name"] = "{}".format(self.server_name)
         nginx_topo.component(self.external_id, "nginx_upstream_server", upstream_server_data)
         nginx_topo.relation(upstream.external_id, self.external_id, "has", {})

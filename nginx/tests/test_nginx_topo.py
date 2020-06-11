@@ -12,7 +12,7 @@ def test_basic_http(aggregator, http_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': http_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': http_instance['name']}
     assert len(components) == 1
     assert len(relations) == 0
     assert instance_key == expected_instance_key
@@ -26,7 +26,7 @@ def test_basic_events(aggregator, events_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': events_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': events_instance['name']}
     # since we do not support events, no components are created at the moment.
     assert len(components) == 0
     assert len(relations) == 0
@@ -41,7 +41,7 @@ def test_simple(aggregator, simple_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': simple_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': simple_instance['name']}
     assert len(components) == 3
     assert len(relations) == 2
     assert instance_key == expected_instance_key
@@ -55,7 +55,7 @@ def test_messy(aggregator, messy_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': messy_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': messy_instance['name']}
     assert len(components) == 11
     assert len(relations) == 10
     assert instance_key == expected_instance_key
@@ -69,7 +69,7 @@ def test_include(aggregator, include_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': include_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': include_instance['name']}
     assert len(components) == 5
     assert len(relations) == 4
     assert instance_key == expected_instance_key
@@ -83,7 +83,7 @@ def test_simple_upstream(aggregator, simple_upstream_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': simple_upstream_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': simple_upstream_instance['name']}
     assert len(components) == 7
     assert len(relations) == 6
     assert instance_key == expected_instance_key
@@ -97,7 +97,7 @@ def test_complex(aggregator, complex_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': complex_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': complex_instance['name']}
     assert len(components) == 40
     assert len(relations) == 39
     assert instance_key == expected_instance_key
@@ -117,7 +117,7 @@ def test_location_zone(aggregator, location_zone_instance):
     components = snapshot.get("components")
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
-    expected_instance_key = {'type': 'nginxtopo', 'url': location_zone_instance['location']}
+    expected_instance_key = {'type': 'nginx', 'url': location_zone_instance['name']}
     assert len(components) == 3
     assert len(relations) == 2
     assert instance_key == expected_instance_key

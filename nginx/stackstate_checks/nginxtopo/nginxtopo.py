@@ -180,22 +180,28 @@ class NginxTopo(AgentCheck):
     def _create_topology(self):
         if self.http:
             self.log.debug("Creating component: {}".format(self.http.external_id))
-            self.component(self.http.external_id, "nginx_http", {})
+            self.component(self.http.external_id, "nginx_http", {"layer": "HTTP"})
             for vs_id, virtual_server in self.http.virtual_servers.items():
                 self.log.debug("Creating component: {}".format(virtual_server.external_id))
-                server_data = {"status_zone": "{}"
-                               .format(virtual_server.status_zone)} if virtual_server.status_zone else {}
+                server_data = {"layer": "Virtual Server"}
+                if virtual_server.status_zone:
+                    server_data["status_zone"] = "{}".format(virtual_server.status_zone)
                 self.component(virtual_server.external_id, "nginx_virtual_server", server_data)
                 self.relation(self.http.external_id, virtual_server.external_id, "has", {})
                 for l_id, location in virtual_server.locations.items():
-                    location_data = {"status_zone": "{}".format(location.status_zone)} if location.status_zone else {}
+                    location_data = {"layer": "Location"}
+                    if location.status_zone:
+                        location_data["status_zone"] = "{}".format(location.status_zone)
                     self.log.debug("Location id: {} - data: {}".format(location.external_id, location_data))
                     self.component(location.external_id, "nginx_location", location_data)
                     self.relation(virtual_server.external_id, location.external_id, "has", {})
                     if location.upstream:
-                        upstream_data = {"zone": "{}".format(location.upstream.zone)} if location.upstream.zone else {}
+                        upstream_data = {"layer": "Upstream"}
+                        if location.upstream.zone:
+                            upstream_data["zone"] = "{}".format(location.upstream.zone)
                         self.component(location.upstream.external_id, "nginx_upstream", upstream_data)
                         self.relation(location.external_id, location.upstream.external_id, "has", {})
                         for s_id, server in location.upstream.servers.items():
-                            self.component(server.external_id, "nginx_upstream_server", {})
+                            upstream_server_data = {"layer": "Upstream Server"}
+                            self.component(server.external_id, "nginx_upstream_server", upstream_server_data)
                             self.relation(location.upstream.external_id, server.external_id, "has", {})

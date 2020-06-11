@@ -16,7 +16,7 @@ Edit the `conf.yaml` file in your agent `/etc/stackstate-agent/conf.d/nginxtopo.
 init_config: {}
 instances:
   - location: /etc/nginx/nginx.conf
-    name: nginx
+    name: stsdemo
 ```
 
 To enable the Nginx metrics check which collects the data from Nginx instance:
@@ -31,6 +31,9 @@ instances:
   - nginx_status_url: http://localhost:81/nginx_status/
     use_plus_api: true
     plus_api_version: 6
+    tags:
+      - nginx_name:stsdemo
+
 ```
 
 To publish the configuration changes, restart the StackState Agent(s).

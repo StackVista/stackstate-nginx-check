@@ -37,6 +37,7 @@
       "defaultComponentAction": {
         "_type": "SyncActionCreateComponent",
         "id": -6,
+        "mappingFunction": {{ get "urn:stackpack:nginx:shared:component-mapping-function:nginx-generic-mapping-function" }},
         "mergeStrategy": "MergePreferTheirs",
         "templateFunction": {{ get "urn:stackpack:nginx:shared:component-template-function:nginx-component-template"  }},
         "type": "default_component_mapping"

@@ -1,6 +1,25 @@
 {
   "nodes": [
     {
+      "_type": "ComponentMappingFunction",
+      "description": "The generic mapping function that is used by the nginx integration synchronisation.",
+      "id": -428,
+      "identifier": "urn:stackpack:nginx:shared:component-mapping-function:nginx-generic-mapping-function",
+      "name": "nginx generic component mapping function",
+      "parameters": [
+        {
+          "_type": "Parameter",
+          "id": -433,
+          "multiple": false,
+          "name": "element",
+          "required": true,
+          "system": true,
+          "type": "STRUCT_TYPE"
+        }
+      ],
+      "script": "{{ include "./scripts/nginx generic component mapping function.groovy" }}"
+    },
+    {
       "_type": "ComponentTemplateFunction",
       "handlebarsTemplate": "{{ include "./templates/nginx component template.json.handlebars" }}",
       "id": -422,

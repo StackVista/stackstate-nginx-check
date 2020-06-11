@@ -1,7 +1,32 @@
 {
   "_type": "Component",
   "checks": [],
-  "streams": [],
+  "streams": [
+    \{{# join element.data.nginx_metric_streams "," \}}
+        {
+            "_type": "MetricStream",
+            "name": "\{{ name \}}",
+            "query": {
+                "conditions": [
+                    {
+                        "key": "tags.nginx_name",
+                        "value": "\{{ element.data.domain \}}"
+                    },
+                    {
+                        "key": "tags.server_zone",
+                        "value": "\{{ element.data.status_zone \}}"
+                    }
+                ],
+                "_type": " MetricTelemetryQuery",
+                "metricField": "\{{ value \}}",
+                "aggregation": "MEAN"
+            },
+            "dataSource": \{{ get "urn:stackpack:common:data-source:stackstate-metrics" \}},
+            "dataType": "METRICS",
+            "id": \{{ id \}}
+        }
+    \{{/ join \}}
+  ],
   "labels": [
     \{{#if element.data.labels\}}
     \{{# join element.data.labels ","\}}

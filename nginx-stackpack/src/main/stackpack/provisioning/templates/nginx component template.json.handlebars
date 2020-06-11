@@ -19,7 +19,7 @@
                 ],
                 "_type": " MetricTelemetryQuery",
                 "metricField": "\{{ value \}}",
-                "aggregation": "MEAN"
+                "aggregation": "\{{ aggregation \}}"
             },
             "dataSource": \{{ get "urn:stackpack:common:data-source:stackstate-metrics" \}},
             "dataType": "METRICS",

@@ -33,6 +33,7 @@ PLUS_API_ENDPOINTS = {
     "nginx": [],
     "http/requests": ["requests"],
     "http/server_zones": ["server_zones"],
+    "http/location_zones": ["location_zones"],
     "http/upstreams": ["upstreams"],
     "http/caches": ["caches"],
     "processes": ["processes"],
@@ -49,6 +50,7 @@ PLUS_API_STREAM_ENDPOINTS = {
 TAGGED_KEYS = {
     'caches': 'cache',
     'server_zones': 'server_zone',
+    'location_zones': 'location_zone',
     'serverZones': 'server_zone',  # VTS
     'upstreams': 'upstream',
     'upstreamZones': 'upstream',  # VTS

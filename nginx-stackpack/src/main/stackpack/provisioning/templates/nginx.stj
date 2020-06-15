@@ -1,6 +1,47 @@
 {
   "nodes": [
     {
+      "_type": "CheckFunction",
+      "id": -338,
+      "identifier": "urn:stackpack:nginx:shared:check-function:nginx-zone-memory",
+      "name": "Nginx Zone Memory",
+      "parameters": [
+        {
+          "_type": "Parameter",
+          "multiple": false,
+          "name": "criticalValue",
+          "required": true,
+          "system": false,
+          "type": "DOUBLE"
+        }, {
+          "_type": "Parameter",
+          "multiple": false,
+          "name": "deviatingValue",
+          "required": true,
+          "system": false,
+          "type": "DOUBLE"
+        }, {
+          "_type": "Parameter",
+          "multiple": false,
+          "name": "freeStream",
+          "required": true,
+          "system": false,
+          "type": "METRIC_STREAM"
+        }, {
+          "_type": "Parameter",
+          "multiple": false,
+          "name": "usedStream",
+          "required": true,
+          "system": false,
+          "type": "METRIC_STREAM"
+        }
+      ],
+      "returnTypes": [
+        "HEALTH_STATE"
+      ],
+      "script": "{{ include "./scripts/Nginx Zone Memory.groovy" }}"
+    },
+    {
       "_type": "ComponentMappingFunction",
       "description": "The generic mapping function that is used by the nginx integration synchronisation.",
       "id": -428,

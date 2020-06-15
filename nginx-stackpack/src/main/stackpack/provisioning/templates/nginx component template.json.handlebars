@@ -1,6 +1,41 @@
 {
   "_type": "Component",
-  "checks": [],
+  "checks": [
+    \{{#if element.data.checks\}}
+      {
+        "_type": "Check",
+        "name": "Memory",
+        "function": \{{ get "urn:stackpack:nginx:shared:check-function:nginx-zone-memory" \}},
+        "arguments": [
+          {
+            "_type": "ArgumentDoubleVal",
+            "parameter": \{{ get "urn:stackpack:nginx:shared:check-function:nginx-zone-memory" "Type=Parameter;Name=criticalValue" \}},
+            "value": 0.95
+          },
+          {
+            "_type": "ArgumentDoubleVal",
+            "parameter": \{{ get "urn:stackpack:nginx:shared:check-function:nginx-zone-memory" "Type=Parameter;Name=deviatingValue" \}},
+            "value": 0.9
+          },
+          {
+            "_type": "ArgumentMetricStreamRef",
+            "parameter": \{{ get "urn:stackpack:nginx:shared:check-function:nginx-zone-memory" "Type=Parameter;Name=freeStream" \}},
+            "maxWindow": 300000,
+            "windowingMethod": "SLIDING",
+            "stream": -3001
+          },
+          {
+            "_type": "ArgumentMetricStreamRef",
+            "parameter": \{{ get "urn:stackpack:nginx:shared:check-function:nginx-zone-memory" "Type=Parameter;Name=usedStream" \}},
+            "maxWindow": 300000,
+            "windowingMethod": "SLIDING",
+            "stream": -3002
+          }
+        ],
+        "syncCreated": false
+      }
+    \{{/if\}}
+  ],
   "streams": [
     \{{# join element.data.nginx_metric_streams "," \}}
         {

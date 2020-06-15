@@ -42,6 +42,7 @@ switch (element.type.name) {
                 [ name: "The current number of free memory pages.", value: "nginx.slab.pages.free", id: "-3001", aggregation: "MAX"],
                 [ name: "The current number of used memory pages.", value: "nginx.slab.pages.used", id: "-3002", aggregation: "MAX"],
             ])
+            element.data.put('checks', true)
         }
     default:
         result = 'Default'

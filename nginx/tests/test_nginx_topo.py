@@ -103,7 +103,9 @@ def test_complex(aggregator, complex_instance):
     assert instance_key == expected_instance_key
     for component in components:
         assert 'h2u' not in component['id']  # upstream zone shouldn't be a component.
-        if component['id'] in ('urn:nginx:nginx:server:127.0.0.1:10122', 'urn:nginx:nginx:server:127.0.0.3:10122'):
+        if component['id'] in ('urn:nginx:nginx:server:127.0.0.1:10122',
+                               'urn:nginx:nginx:server:127.0.0.3:10122',
+                               'urn:nginx:nginx:upstream:H1'):
             assert 'status_zone' in component['data']
         else:
             assert 'status_zone' not in component['data']

@@ -82,7 +82,8 @@ class Upstream():
     def __init__(self, id, external_id):
         self.id = id
         self.external_id = external_id
-        self.zone = None
+        self.upstream_name = None
+        self.status_zone = None
         # The upstream servers
         self.servers = {}
 
@@ -90,9 +91,9 @@ class Upstream():
     def create_upstream(self, location, nginx_topo):
         upstream_data = {"layer": "Upstream"}
         upstream_data["domain"] = "{}".format(nginx_topo.name)
-        upstream_data["name"] = "{}".format(self.zone)
-        if self.zone:
-            upstream_data["zone"] = "{}".format(self.zone)
+        upstream_data["name"] = "{}".format(self.upstream_name)
+        if self.status_zone:
+            upstream_data["status_zone"] = "{}".format(self.status_zone)
         nginx_topo.component(self.external_id, "nginx_upstream", upstream_data)
         nginx_topo.relation(location.external_id, self.external_id, "has", {})
         for s_id, server in self.servers.items():
@@ -226,6 +227,7 @@ class NginxTopo(AgentCheck):
         upstream_id = str(uuid.uuid4())
         upstream_ext_id = "urn:nginx:{}:upstream:{}".format(self.name, upstream_name)
         location.upstream = Upstream(upstream_id, upstream_ext_id)
+        location.upstream.upstream_name = upstream_name
         for block in parsed['block']:
             if block['directive'] == 'server':
                 server_id = str(uuid.uuid4())
@@ -235,7 +237,7 @@ class NginxTopo(AgentCheck):
                                                                                  server_name)
                 location.upstream.servers[server_id] = Server(server_id, server_external_id, server_name)
             if block['directive'] == 'zone':
-                location.upstream.zone = block['args'][0]
+                location.upstream.status_zone = block['args'][0]
 
     def _create_topology(self):
         if self.http:

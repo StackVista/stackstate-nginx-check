@@ -35,6 +35,14 @@ switch (element.type.name) {
             ])
         }
         break
+    case 'nginx_upstream':
+        if(element.data.containsKey("status_zone")){
+            metric_zone = "tags.slab"
+            metric_streams = metric_streams.plus([
+                [ name: "The current number of free memory pages.", value: "nginx.slab.pages.free", id: "-3001", aggregation: "MAX"],
+                [ name: "The current number of used memory pages.", value: "nginx.slab.pages.used", id: "-3002", aggregation: "MAX"],
+            ])
+        }
     default:
         result = 'Default'
         break

@@ -74,7 +74,21 @@
       "name": "Nginx - {{instanceName}}",
       "query": "(domain IN (\"{{instanceName}}\"))",
       "queryVersion": "0.0.1",
-      "showIndirectRelations": false
+      "showIndirectRelations": false,
+      "viewHealthStateConfiguration": {
+        "_type": "ViewHealthStateConfiguration",
+        "arguments": [
+          {
+            "_type": "ArgumentLongVal",
+            "parameter": {{ get "urn:stackpack:common:view-health-state-configuration-function:minimum-health-states" "Type=Parameter;Name=minDeviatingHealthStates" }},
+            "value": 0
+          },
+          {
+            "_type": "ArgumentLongVal",
+            "parameter": {{ get "urn:stackpack:common:view-health-state-configuration-function:minimum-health-states" "Type=Parameter;Name=minCriticalHealthStates" }},
+            "value": 0
+          }
+        ]
     }
   ],
   "version": "0.1"

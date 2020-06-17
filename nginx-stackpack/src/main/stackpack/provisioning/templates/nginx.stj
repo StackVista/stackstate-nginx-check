@@ -63,13 +63,27 @@
     {
       "_type": "ComponentTemplateFunction",
       "handlebarsTemplate": "{{ include "./templates/nginx component template.json.handlebars" }}",
-      "id": -422,
       "identifier": "urn:stackpack:nginx:shared:component-template-function:nginx-component-template",
       "name": "Nginx Component Template",
       "parameters": [
         {
           "_type": "Parameter",
-          "id": -421,
+          "multiple": false,
+          "name": "element",
+          "required": true,
+          "system": true,
+          "type": "STRUCT_TYPE"
+        }
+      ]
+    },
+    {
+      "_type": "ComponentTemplateFunction",
+      "handlebarsTemplate": "{{ include "./templates/nginx upstream server component template.json.handlebars" }}",
+      "identifier": "urn:stackpack:nginx:shared:component-template-function:nginx-upstream-server-component-template",
+      "name": "Nginx Upstream Server Component Template",
+      "parameters": [
+        {
+          "_type": "Parameter",
           "multiple": false,
           "name": "element",
           "required": true,

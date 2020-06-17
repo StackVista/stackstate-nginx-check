@@ -33,13 +33,20 @@
     },
     {
       "_type": "Sync",
-      "componentActions": [],
+      "componentActions": [
+        {
+          "_type": "SyncActionCreateComponent",
+          "mappingFunction": {{ get "urn:stackpack:nginx:shared:component-mapping-function:nginx-generic-mapping-function" }},
+          "mergeStrategy": "MergePreferTheirs",
+          "templateFunction": {{ get "urn:stackpack:nginx:shared:component-template-function:nginx-upstream-server-component-template" }},
+          "type": "nginx_upstream_server"
+        }
+      ],
       "defaultComponentAction": {
         "_type": "SyncActionCreateComponent",
-        "id": -6,
         "mappingFunction": {{ get "urn:stackpack:nginx:shared:component-mapping-function:nginx-generic-mapping-function" }},
         "mergeStrategy": "MergePreferTheirs",
-        "templateFunction": {{ get "urn:stackpack:nginx:shared:component-template-function:nginx-component-template"  }},
+        "templateFunction": {{ get "urn:stackpack:nginx:shared:component-template-function:nginx-component-template" }},
         "type": "default_component_mapping"
       },
       "defaultRelationAction": {
@@ -81,14 +88,17 @@
           {
             "_type": "ArgumentLongVal",
             "parameter": {{ get "urn:stackpack:common:view-health-state-configuration-function:minimum-health-states" "Type=Parameter;Name=minDeviatingHealthStates" }},
-            "value": 0
+            "value": 1
           },
           {
             "_type": "ArgumentLongVal",
             "parameter": {{ get "urn:stackpack:common:view-health-state-configuration-function:minimum-health-states" "Type=Parameter;Name=minCriticalHealthStates" }},
-            "value": 0
+            "value": 1
           }
-        ]
+        ],
+        "enabled": true,
+        "function": {{ get "urn:stackpack:common:view-health-state-configuration-function:minimum-health-states" }}
+      }
     }
   ],
   "version": "0.1"

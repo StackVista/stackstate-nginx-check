@@ -1,0 +1,61 @@
+{
+  "_type": "Component",
+  "checks": [],
+  "streams": [
+    \{{# join element.data.nginx_metric_streams "," \}}
+        {
+            "_type": "MetricStream",
+            "name": "\{{ name \}}",
+            "query": {
+                "conditions": [
+                    {
+                        "key": "tags.nginx_name",
+                        "value": "\{{ element.data.domain \}}"
+                    },
+                    {
+                        "key": "tags.server",
+                        "value": "\{{ element.data.name \}}"
+                    },
+                    {
+                        "key": "tags.upstream",
+                        "value": "\{{ element.data.upstream \}}"
+                    }
+                ],
+                "_type": " MetricTelemetryQuery",
+                "metricField": "\{{ value \}}",
+                "aggregation": "\{{ aggregation \}}"
+            },
+            "dataSource": \{{ get "urn:stackpack:common:data-source:stackstate-metrics" \}},
+            "dataType": "METRICS",
+            "id": \{{ id \}}
+        }
+    \{{/ join \}}
+  ],
+  "labels": [
+    \{{#if element.data.labels\}}
+    \{{# join element.data.labels ","\}}
+        {
+          "_type": "Label",
+          "name": "\{{ this \}}"
+        }
+    \{{/ join \}}
+    \{{/if\}}
+    \{{#if element.data.tags\}}
+    \{{# join element.data.tags "," ","\}}
+    {
+      "_type": "Label",
+      "name": "\{{key\}}:\{{this\}}"
+    }
+    \{{/ join \}}
+    \{{/if\}}
+    ],
+  "name": "\{{#if element.data.name\}}\{{ element.data.name \}}\{{else\}}\{{ element.externalId \}}\{{/if\}}",
+\{{#if element.data.description\}}"description": "\{{ element.data.description \}}",\{{/if\}}
+  "type" : \{{ resolveOrCreate "ComponentType" element.type.name "Auto-synced Component" \}},
+  "version": "\{{ element.data.version \}}",
+  "layer": \{{ resolveOrCreate "Layer" element.data.layer "Auto-synced Components" \}},
+  "domain": \{{ resolveOrCreate "Domain" element.data.domain "Auto-synced Domain" \}},
+  "environments": [
+    \{{ get "urn:stackpack:nginx:shared:environment:prod" \}}
+  ]
+}

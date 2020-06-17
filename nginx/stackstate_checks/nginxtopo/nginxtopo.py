@@ -112,6 +112,7 @@ class Server():
         upstream_server_data = {"layer": "Upstream Server"}
         upstream_server_data["domain"] = "{}".format(nginx_topo.name)
         upstream_server_data["name"] = "{}".format(self.server_name)
+        upstream_server_data["upstream"] = "{}".format(upstream.upstream_name)
         nginx_topo.component(self.external_id, "nginx_upstream_server", upstream_server_data)
         nginx_topo.relation(upstream.external_id, self.external_id, "has", {})
 

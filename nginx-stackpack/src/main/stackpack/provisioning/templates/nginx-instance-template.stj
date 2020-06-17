@@ -70,7 +70,7 @@
       "groupingEnabled": true,
       "id": -160,
       "identifier": "urn:stackpack:nginx:instance:{{instanceId}}:query-view:nginx",
-      "minimumGroupSize": 8,
+      "minimumGroupSize": 4,
       "name": "Nginx - {{instanceName}}",
       "query": "(domain IN (\"{{instanceName}}\"))",
       "queryVersion": "0.0.1",

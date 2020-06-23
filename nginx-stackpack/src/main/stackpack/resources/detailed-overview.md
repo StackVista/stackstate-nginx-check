@@ -8,8 +8,7 @@ The following prerequisites need to be met:
 #### Enabling Nginx check
 To enable the Nginx topology check which collects the data from Nginx instance:
 
-Edit the `conf.yaml` file in your agent `/etc/stackstate-agent/conf.d/nginxtopo.d` directory, replacing `<name>` with your nginx name and 
-`<location>` with location to where the `nginx.conf` can be found.
+Edit the `conf.yaml` file in your agent `/etc/stackstate-agent/conf.d/nginxtopo.d` directory, replacing `<name>` with your nginx name and `<location>` with location to where the `nginx.conf` can be found. `<scm>` points to a base SCM url where the nginx config can be found (Optional)
 
 ```
 # Section used for Nginx Topo check config
@@ -17,6 +16,7 @@ init_config: {}
 instances:
   - location: /etc/nginx/nginx.conf
     name: stsdemo
+    scm: https://github.com/jdewinne/stackstate-nginx-check/blob/main/nginx/tests/data/complex
 ```
 
 To enable the Nginx metrics check which collects the data from Nginx instance:

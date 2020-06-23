@@ -123,6 +123,14 @@
       "name": "nginx_upstream_server"
     },
     {
+      "_type":"ComponentActionDefinition",
+      "bindQuery":"type in (\"nginx_http\",\"nginx_virtual_server\",\"nginx_location\",\"nginx_upstream\",\"nginx_upstream_server\")",
+      "description":"View the Nginx configuration",
+      "identifier": "urn:stackpack:nginx:shared:component-action-definition:go-to-nginx-scm",
+      "name":"Go to Nginx SCM",
+      "script": "{{ include "./scripts/nginx component action definition.groovy" }}"
+    },
+    {
       "_type": "Environment",
       "id": -329,
       "identifier": "urn:stackpack:nginx:shared:environment:prod",

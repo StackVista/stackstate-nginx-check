@@ -2,3 +2,4 @@ init_config: {}
 instances:
   - location: /etc/nginx/nginx.conf
     name: nginx
+    scm: https://github.com/jdewinne/stackstate-nginx-check/blob/main/nginx/tests/data/complex/

@@ -1,4 +1,4 @@
-# CapitalOne PoC agent
+# StackState Nginx Stackpack
 
 ## Testing
 + Manually link the following folders from https://github.com/StackVista/stackstate-agent-integrations in here:

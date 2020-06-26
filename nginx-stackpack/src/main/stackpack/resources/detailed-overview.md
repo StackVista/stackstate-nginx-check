@@ -16,7 +16,7 @@ init_config: {}
 instances:
   - location: /etc/nginx/nginx.conf
     name: stsdemo
-    scm: https://github.com/jdewinne/stackstate-nginx-check/blob/main/nginx/tests/data/complex
+    scm: https://github.com/jdewinne/stackstate-nginx-check/blob/main/nginx/tests/data/complex/
 ```
 
 To enable the Nginx metrics check which collects the data from Nginx instance:

@@ -24,5 +24,5 @@
 ![Error](images/error.png)
 3. Going to the actual configuration using the `Go to Nginx SCM` component action
 ![ComponentAction](images/componentAction.png)
-4. An example of all the metrics captured by StackState for an Upstream Server
+4. An example of all the metrics captured by StackState for a Virtual Server
 ![Metrics](images/metrics.gif)

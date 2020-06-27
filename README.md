@@ -23,6 +23,6 @@
 2. Error propagation: In the case there's not enough memory for a zone
 ![Error](images/error.png)
 3. Going to the actual configuration using the `Go to Nginx SCM` component action
-![ComponentAction](images/componentAction.png)
+![ComponentAction](images/go_to_scm.gif)
 4. An example of all the metrics captured by StackState for a Virtual Server
 ![Metrics](images/metrics.gif)

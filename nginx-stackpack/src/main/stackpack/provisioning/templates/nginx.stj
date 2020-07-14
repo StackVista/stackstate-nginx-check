@@ -94,31 +94,31 @@
     },
     {
       "_type": "ComponentType",
-      "iconbase64": "{{ include "./icons/nginx http.png" "base64" }}",
+      "iconbase64": "{{ include "./icons/File-HTTP-300x300-Green-355.png" "base64" }}",
       "identifier": "urn:stackpack:nginx:shared:component-type:http",
       "name": "nginx_http"
     },
     {
       "_type": "ComponentType",
-      "iconbase64": "{{ include "./icons/nginx virtual server.png" "base64" }}",
+      "iconbase64": "{{ include "./icons/Virtual-machine-300x300-Green-355" "base64" }}",
       "identifier": "urn:stackpack:nginx:shared:component-type:virtual-server",
       "name": "nginx_virtual_server"
     },
     {
       "_type": "ComponentType",
-      "iconbase64": "{{ include "./icons/nginx location.png" "base64" }}",
+      "iconbase64": "{{ include "./icons/Location-Marker-300x300-Green-355.png" "base64" }}",
       "identifier": "urn:stackpack:nginx:shared:component-type:location",
       "name": "nginx_location"
     },
     {
       "_type": "ComponentType",
-      "iconbase64": "{{ include "./icons/nginx upstream.png" "base64" }}",
+      "iconbase64": "{{ include "./icons/Upstream-up-arrow-300x300-Green-355.png" "base64" }}",
       "identifier": "urn:stackpack:nginx:shared:component-type:upstream",
       "name": "nginx_upstream"
     },
     {
       "_type": "ComponentType",
-      "iconbase64": "{{ include "./icons/nginx upstream server.png" "base64" }}",
+      "iconbase64": "{{ include "./icons/Upstream-server-300x300-Green-355.png" "base64" }}",
       "identifier": "urn:stackpack:nginx:shared:component-type:upstream-server",
       "name": "nginx_upstream_server"
     },

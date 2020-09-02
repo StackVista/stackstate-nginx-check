@@ -1,0 +1,5 @@
+init_config: {}
+instances:
+  - location: STS_NGINXTOPO_LOCATION
+    name: STS_NGINXTOPO_NAME
+    scm: STS_NGINXTOPO_SCM

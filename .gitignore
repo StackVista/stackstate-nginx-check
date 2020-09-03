@@ -152,3 +152,4 @@ stackstate_checks_tests_helper
 nginx-stackpack/project/project/
 nginx-stackpack/project/target/
 nginx-stackpack/target/
+docker/**/tmp

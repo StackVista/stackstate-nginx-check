@@ -3,3 +3,4 @@ instances:
   - location: STS_NGINXTOPO_LOCATION
     name: STS_NGINXTOPO_NAME
     scm: STS_NGINXTOPO_SCM
+    min_collection_interval: 60

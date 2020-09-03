@@ -15,4 +15,6 @@ mkdir -p $topo_config_dir
 http -d GET $sts_nginxtopo_download -o $topo_config_dir/download.zip
 unzip -q -o $topo_config_dir/download.zip -d $(dirname $sts_nginxtopo_location)
 
-stackstate-agent check nginxtopo
+stackstate-agent run &
+sleep 10
+stackstate-agent stop

@@ -126,7 +126,6 @@ class NginxTopo(AgentCheck):
     def __init__(self, name, init_config, instances=None):
         AgentCheck.__init__(self, name, init_config, instances)
         self.payload = None
-        self.name = None
         self.baseurl = None
         self.http = None
         self.upstreams = {}

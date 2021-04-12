@@ -17,14 +17,14 @@ class ConfigError(Exception):
 
 
 class Topo():
-    def __init__(self, id, external_id, filename, line):
+    def __init__(self, log, id, external_id, filename, line):
+        self.log = log
         self.id = id
         self.external_id = external_id
         self.filename = filename
         self.line = line
 
     def initialize_data(self, nginx_topo, layer, name):
-        nginx_topo.log.debug("Creating component: {}".format(self.external_id))
         data = {"layer": "{}".format(layer)}
         data["domain"] = "{}".format(nginx_topo.name)
         data["name"] = "{}".format(name)
@@ -35,8 +35,8 @@ class Topo():
 
 
 class Http(Topo):
-    def __init__(self, id, external_id, filename, line):
-        Topo.__init__(self, id, external_id, filename, line)
+    def __init__(self, log, id, external_id, filename, line):
+        Topo.__init__(self, log, id, external_id, filename, line)
         self.virtual_servers = {}
 
     # Create Http component in stackstate
@@ -48,8 +48,8 @@ class Http(Topo):
 
 
 class VirtualServer(Topo):
-    def __init__(self, id, external_id, filename, line):
-        Topo.__init__(self, id, external_id, filename, line)
+    def __init__(self, log, id, external_id, filename, line):
+        Topo.__init__(self, log, id, external_id, filename, line)
         self.listen = None
         self.status_zone = None
         self.locations = {}
@@ -66,8 +66,8 @@ class VirtualServer(Topo):
 
 
 class Location(Topo):
-    def __init__(self, id, external_id, filename, line, location_name):
-        Topo.__init__(self, id, external_id, filename, line)
+    def __init__(self, log, id, external_id, filename, line, location_name):
+        Topo.__init__(self, log, id, external_id, filename, line)
         self.location_name = location_name
         self.status_zone = None
         # The upstream servers
@@ -79,7 +79,7 @@ class Location(Topo):
         location_data = self.initialize_data(nginx_topo,  "Location", self.location_name)
         if self.status_zone:
             location_data["status_zone"] = "{}".format(self.status_zone)
-        nginx_topo.log.debug("Location id: {} - data: {}".format(self.external_id, location_data))
+        self.log.debug("Location id: {} - data: {}".format(self.external_id, location_data))
         nginx_topo.component(self.external_id, "nginx_location", location_data)
         nginx_topo.relation(virtual_server.external_id, self.external_id, "has", {})
         if self.upstream:
@@ -87,8 +87,8 @@ class Location(Topo):
 
 
 class Upstream(Topo):
-    def __init__(self, id, external_id, filename, line):
-        Topo.__init__(self, id, external_id, filename, line)
+    def __init__(self, log, id, external_id, filename, line):
+        Topo.__init__(self, log, id, external_id, filename, line)
         self.upstream_name = None
         self.status_zone = None
         # The upstream servers
@@ -107,8 +107,8 @@ class Upstream(Topo):
 
 # Corresponds with an upstream server
 class Server(Topo):
-    def __init__(self, id, external_id, filename, line, server_name):
-        Topo.__init__(self, id, external_id, filename, line)
+    def __init__(self, log, id, external_id, filename, line, server_name):
+        Topo.__init__(self, log, id, external_id, filename, line)
         self.server_name = server_name
 
     # Create upstream server in stackstate
@@ -117,6 +117,28 @@ class Server(Topo):
         upstream_server_data["upstream"] = "{}".format(upstream.upstream_name)
         nginx_topo.component(self.external_id, "nginx_upstream_server", upstream_server_data)
         nginx_topo.relation(upstream.external_id, self.external_id, "has", {})
+
+
+class NginxTopoBuilder:
+    def __init__(self, name, baseurl):
+        self.components = {}
+        self.relations = []
+        self.name = name
+        self.baseurl = baseurl
+
+    def component(self, external_id, type_name, data):
+        self.components[external_id] = {
+            "type_name": type_name,
+            "data": data
+        }
+
+    def relation(self, source_id, target_id, type_name, data):
+        self.relations.append({
+            "source_id": source_id,
+            "target_id": target_id,
+            "type_name": type_name,
+            "data": data
+        })
 
 
 class NginxTopo(AgentCheck):
@@ -207,13 +229,13 @@ class NginxTopo(AgentCheck):
 
     def _directive_http(self, parsed, id, parent, filename):
         external_id = "urn:nginx:{}:http".format(self.name)
-        self.http = Http(id=id, external_id=external_id, filename=filename, line=parsed['line'])
+        self.http = Http(log=self.log, id=id, external_id=external_id, filename=filename, line=parsed['line'])
         return self.http
 
     def _directive_server(self, parsed, id, parent, filename):
         self.log.debug("Processing directive server for {}".format(id))
         external_id = "urn:nginx:{}:server:{}".format(self.name, "unknown")
-        parent.virtual_servers[id] = VirtualServer(id=id, external_id=external_id, filename=filename,
+        parent.virtual_servers[id] = VirtualServer(log=self.log, id=id, external_id=external_id, filename=filename,
                                                    line=parsed['line'])
         return parent.virtual_servers[id]
 
@@ -229,8 +251,8 @@ class NginxTopo(AgentCheck):
         location_name = ":".join(parsed['args'])
         external_id = "urn:nginx:{}:server:{}:location:{}".format(self.name, parent.listen,
                                                                   location_name)
-        parent.locations[id] = Location(id=id, external_id=external_id, filename=filename, line=parsed['line'],
-                                        location_name=location_name)
+        parent.locations[id] = Location(log=self.log, id=id, external_id=external_id, filename=filename,
+                                        line=parsed['line'], location_name=location_name)
         return parent.locations[id]
 
     def _directive_proxy_pass(self, parsed, id, parent, filename):
@@ -249,7 +271,8 @@ class NginxTopo(AgentCheck):
         filename = self.upstreams[upstream_name]["filename"]
         upstream_id = str(uuid.uuid4())
         upstream_ext_id = "urn:nginx:{}:upstream:{}".format(self.name, upstream_name)
-        location.upstream = Upstream(upstream_id, upstream_ext_id, filename=filename, line=parsed['line'])
+        location.upstream = Upstream(self.log, upstream_id, upstream_ext_id,
+                                     filename=filename, line=parsed['line'])
         location.upstream.upstream_name = upstream_name
         for block in parsed['block']:
             if block['directive'] == 'server':
@@ -258,11 +281,23 @@ class NginxTopo(AgentCheck):
                 server_external_id = "urn:nginx:{}:upstream:{}:server:{}".format(self.name,
                                                                                  upstream_name,
                                                                                  server_name)
-                location.upstream.servers[server_id] = Server(server_id, server_external_id, filename=filename,
-                                                              line=block['line'], server_name=server_name)
+                location.upstream.servers[server_id] = Server(self.log, server_id, server_external_id,
+                                                              filename=filename, line=block['line'],
+                                                              server_name=server_name)
             if block['directive'] == 'zone':
                 location.upstream.status_zone = block['args'][0]
 
     def _create_topology(self):
         if self.http:
-            self.http.create_http(self)
+            topo_builder = NginxTopoBuilder(
+                self.name if hasattr(self, 'name') else '',
+                self.baseurl if hasattr(self, 'baseurl') else ''
+            )
+            self.http.create_http(topo_builder)
+            ids = [component_id for component_id, component_data in topo_builder.components.items()]
+            assert len(ids) == len(topo_builder.components.items())
+            for component_id, component_data in topo_builder.components.items():
+                self.component(component_id, component_data['type_name'], component_data['data'])
+            for relation_data in topo_builder.relations:
+                self.relation(relation_data['source_id'], relation_data['target_id'],
+                              relation_data['type_name'], relation_data['data'])

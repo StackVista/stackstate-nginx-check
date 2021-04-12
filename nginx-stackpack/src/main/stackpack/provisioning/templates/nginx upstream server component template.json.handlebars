@@ -32,16 +32,8 @@
     \{{/ join \}}
   ],
   "labels": [
-    \{{#if element.data.labels\}}
-    \{{# join element.data.labels ","\}}
-        {
-          "_type": "Label",
-          "name": "\{{ this \}}"
-        }
-    \{{/ join \}}
-    \{{/if\}}
     \{{#if element.data.tags\}}
-    \{{# join element.data.tags "," ","\}}
+    \{{# join element.data.tags "," \}}
     {
       "_type": "Label",
       "name": "\{{key\}}:\{{this\}}"

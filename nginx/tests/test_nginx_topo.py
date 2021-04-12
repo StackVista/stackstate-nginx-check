@@ -98,7 +98,12 @@ def test_complex(aggregator, complex_instance):
     relations = snapshot.get("relations")
     instance_key = snapshot.get("instance_key")
     expected_instance_key = {'type': 'nginx', 'url': complex_instance['name']}
-    assert len(components) == 40
+
+    # check that there are no duplicates in the data
+    ids = [x['id'] for x in components]
+    assert len(ids) == len(set(ids))
+
+    assert len(components) == 35
     assert len(relations) == 39
     assert instance_key == expected_instance_key
     for component in components:

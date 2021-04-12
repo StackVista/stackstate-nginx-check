@@ -2,11 +2,12 @@
 
 ## Testing
 + Manually link the following folders from https://github.com/StackVista/stackstate-agent-integrations in here:
-  ```  
-  ln -s [STACKSTATE_AGENT_INTEGRATIONS]/.setup-scripts
-  ln -s [STACKSTATE_AGENT_INTEGRATIONS]/stackstate_checks_base
-  ln -s [STACKSTATE_AGENT_INTEGRATIONS]/stackstate_checks_dev
-  ln -s [STACKSTATE_AGENT_INTEGRATIONS]/stackstate_checks_tests_helper
+  ``` 
+  export STACKSTATE_AGENT_INTEGRATIONS=<PLEASE FILL IN YOUR AGENT DIR HERE>
+  ln -s $STACKSTATE_AGENT_INTEGRATIONS/.setup-scripts
+  ln -s $STACKSTATE_AGENT_INTEGRATIONS/stackstate_checks_base
+  ln -s $STACKSTATE_AGENT_INTEGRATIONS/stackstate_checks_dev
+  ln -s $STACKSTATE_AGENT_INTEGRATIONS/stackstate_checks_tests_helper
   ```
 + Follow the setup and testing as described in https://github.com/StackVista/stackstate-agent-integrations#setup
 
